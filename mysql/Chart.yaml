@@ -1,0 +1,17 @@
+# The chart API version, always "v1"
+apiVersion: v1
+# The version of the app that this contains (optional). This needn't be SemVer.
+appVersion: 8.0
+description: simple mysql
+name: mysql
+# A SemVer 2 version
+version: 0.1.0
+keywords:
+  - mysql
+  - db
+home: https://www.mysql.com/
+icon: https://www.mysql.com/common/logos/logo-mysql-170x115.png
+maintainers:
+- name: kuops
+  email: opshsy@gmail.com
+engine: gotpl

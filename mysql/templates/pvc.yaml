@@ -1,0 +1,15 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Values.storage.name }}
+  labels:
+    app.kubernetes.io/name: {{ include "mysql.name" . }}
+    helm.sh/chart: {{ include "mysql.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  accessModes:
+    - {{ .Values.storage.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.storage.size | quote }}
