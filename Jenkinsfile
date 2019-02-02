@@ -60,7 +60,7 @@ spec:
             steps {
                 container('helm') {
                     CONFIGMAP_MD5 = sh (
-                        script: "md5sum voyager/templates/configmap.yaml|awk '{print $1}'",
+                        script: 'md5sum voyager/templates/configmap.yaml|awk \'{print $1}\'',
                         returnStdout: true
                     ).trim()
                     sh """
