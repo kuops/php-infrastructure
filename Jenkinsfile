@@ -47,7 +47,6 @@ spec:
                 container('kubectl') {
                     sh """
                     /usr/local/bin/kubectl get pod
-                    /usr/local/bin/kubectl create ns dev
                     """
                 }
                 container('helm') {
