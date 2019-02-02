@@ -36,6 +36,10 @@ spec:
         }
     }
     
+    triggers {
+        pollSCM('*/2 * * * 1-5')
+    }
+	
     stages {
         
         stage('init helm && kubectl') {
