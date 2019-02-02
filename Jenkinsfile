@@ -59,10 +59,12 @@ spec:
             
             steps {
                 container('helm') {
-                    CONFIGMAP_MD5 = sh (
-                        script: 'md5sum voyager/templates/configmap.yaml|awk \'{print $1}\'',
-                        returnStdout: true
-                    ).trim()
+                    script {
+                        CONFIGMAP_MD5 = sh (
+                            script: 'md5sum voyager/templates/configmap.yaml|awk \'{print $1}\'',
+                            returnStdout: true
+                        ).trim()
+		    }
                     sh """
                     pwd
                     sed -i  "/name: CONFIGMAP_MD5/{n;s@\".*\"@\"${CONFIGMAP_MD5}\"@g}" voyager/templates/deployment.yaml
