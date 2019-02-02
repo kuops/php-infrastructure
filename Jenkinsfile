@@ -72,7 +72,7 @@ spec:
                     sh """
                     pwd
                     sed "/name: CONFIGMAP_MD5/{n;s@\".*\"@\"${CONFIGMAP_MD5}\"@g}" voyager/templates/deployment.yaml
-                    sed -i "/name: CONFIGMAP_MD5/{n;s@\".*\"@\"${CONFIGMAP_MD5}\"@g}" voyager/templates/deployment.yaml
+                    sed -i "/name: CONFIGMAP_MD5/{n;s@\\\".*\\\"@\"${CONFIGMAP_MD5}\"@g}" voyager/templates/deployment.yaml
                     helm  upgrade mysql-dev mysql --install --namespace=dev --wait
                     helm  upgrade php-app voyager --install --namespace=dev --wait
                     """
