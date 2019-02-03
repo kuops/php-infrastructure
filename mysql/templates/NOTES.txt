@@ -1,21 +1,40 @@
-1. Get the application URL by running these commands:
-{{- if .Values.ingress.enabled }}
-{{- range $host := .Values.ingress.hosts }}
-  {{- range $.Values.ingress.paths }}
-  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host }}{{ . }}
-  {{- end }}
+MySQL can be accessed via port 3306 on the following DNS name from within your cluster:
+
+{{ template "mysql.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+
+MySQL password setting in env values:
+
+MYSQL_ROOT_PASSWORD={{- if .Values.image.envVars }}
+      {{- $rootpassword := index .Values.image.envVars 0 -}}
+      {{ $rootpassword.value }}
 {{- end }}
-{{- else if contains "NodePort" .Values.service.type }}
-  export NODE_PORT=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "mysql.fullname" . }})
-  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
-  echo http://$NODE_IP:$NODE_PORT
-{{- else if contains "LoadBalancer" .Values.service.type }}
-     NOTE: It may take a few minutes for the LoadBalancer IP to be available.
-           You can watch the status of by running 'kubectl get svc -w {{ include "mysql.fullname" . }}'
-  export SERVICE_IP=$(kubectl get svc --namespace {{ .Release.Namespace }} {{ include "mysql.fullname" . }} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-  echo http://$SERVICE_IP:{{ .Values.service.port }}
-{{- else if contains "ClusterIP" .Values.service.type }}
-  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "mysql.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
-  echo "Visit http://127.0.0.1:8080 to use your application"
-  kubectl port-forward $POD_NAME 8080:80
+
+MYSQL_USER={{- if .Values.image.envVars }}
+      {{- $mysqluser := index .Values.image.envVars 2 -}}
+      {{ $mysqluser.value }}
 {{- end }}
+
+MYSQL_PASSWORD={{- if .Values.image.envVars }}
+      {{- $mysqlpass := index .Values.image.envVars 3 -}}
+      {{ $mysqlpass.value }}
+{{- end }}
+
+MYSQL_DATABASE={{- if .Values.image.envVars }}
+      {{- $mysqldb := index .Values.image.envVars 1 -}}
+      {{ $mysqldb.value }}
+{{- end }}
+
+
+Mysql connect test:
+
+ 1. Run a pod that you can use as a client:
+
+      kubectl run {{ template "mysql.fullname" . }}-client --rm --tty -i --restart='Never' --image  {{ .Values.image.repository }}:{{ .Values.image.tag }} --namespace {{ .Release.Namespace }} --command -- bash
+
+  2. To connect to master service (read/write):
+
+      mysql -h {{ template "mysql.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local -uroot -p {{- if .Values.image.envVars }}
+      {{- $mysqldb := index .Values.image.envVars 1 -}}
+      {{ $mysqldb.value }}
+{{- end }}
+

@@ -4,10 +4,26 @@
 
 replicaCount: 1
 
-image:
-  repository: nginx
-  tag: stable
-  pullPolicy: IfNotPresent
+initcontainer:
+  image:
+    repository: docker.k8s.kuops.com/php-example-app
+    tag: master-54
+    pullPolicy: Always
+
+phpfpm:
+  image:
+    repository: kuopsme/php
+    tag: 7.2-fpm-alpine
+    pullPolicy: IfNotPresent
+
+nginx:
+  image:
+    repository: kuopsme/nginx
+    tag: 1.15-alpine
+    pullPolicy: IfNotPresent
+
+imagePullSecrets:
+  name: regcred
 
 nameOverride: ""
 fullnameOverride: ""
@@ -31,20 +47,16 @@ ingress:
         - php.k8s.kuops.com
 
 configmap:
-  name: app-conf
+  name: php-app-conf
   db_host: mysql-dev
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #  cpu: 100m
-  #  memory: 128Mi
-  # requests:
-  #  cpu: 100m
-  #  memory: 128Mi
+resources: 
+  limits:
+   cpu: 0.5
+   memory: 256Mi
+  requests:
+   cpu: 0.2
+   memory: 128Mi
 
 nodeSelector: {}
 

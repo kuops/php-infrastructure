@@ -20,10 +20,11 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       imagePullSecrets:
-        - name: regcred
+        - name: {{ .Values.imagePullSecrets.name }}
       initContainers:
         - name: php-init
-          image: docker.k8s.kuops.com/php-example-app:master-54
+          image: {{ .Values.initcontainer.image.repository }}:{{ .Values.initcontainer.image.tag }}
+          imagePullPolicy: {{ .Values.initcontainer.pullPolicy }}
           command: ['/bin/sh', '-c']
           args:
             - 'cp -rp /code/* /var/www && cd /var/www && php artisan voyager:install --with-dummy'
@@ -35,8 +36,8 @@ spec:
               subPath: .env
       containers:
         - name: nginx
-          image: kuopsme/nginx:1.15-alpine
-          imagePullPolicy: IfNotPresent
+          image: {{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag }}
+          imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
           ports:
             - containerPort: 80
               name: http
@@ -53,8 +54,8 @@ spec:
             - name: php-app
               mountPath: /var/www
         - name: php-fpm
-          image: kuopsme/php:7.2-fpm-alpine
-          imagePullPolicy: IfNotPresent
+          image: {{ .Values.phpfpm.image.repository }}:{{ .Values.phpfpm.image.tag }}
+          imagePullPolicy: {{ .Values.phpfpm.image.pullPolicy }}
           ports:
             - containerPort: 9000
           volumeMounts:
@@ -64,12 +65,7 @@ spec:
             - name: php-app
               mountPath: /var/www
           resources:
-            requests:
-              memory: 128Mi
-              cpu: 0.2
-            limits:
-              memory: 256Mi
-              cpu: 0.5
+{{ toYaml .Values.resources | indent 12 }}
       volumes:
         - name: conf
           configMap:
