@@ -13,7 +13,7 @@ spec:
   serviceAccountName: example-jenkins
   containers:
   - name: helm
-    image: lachlanevenson/k8s-helm:v3.1.1
+    image: dtzar/helm-kubectl:3.1.1
     command:
     - cat
     tty: true
@@ -49,6 +49,7 @@ spec:
                 container('helm') {
                     sh """
                       helm template blue voyager|kubectl apply -f -
+                      kubectl rollout status deployment blue-voyager
                     """
                 }
 
@@ -62,6 +63,7 @@ spec:
                     sh """
                       sed -i 's@master@canary@g' voyager/values.yaml
                       helm template green voyager|kubectl apply -f -
+                      kubectl rollout status deployment green-voyager
                     """
                 }
 
