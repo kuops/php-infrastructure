@@ -6,24 +6,21 @@ replicaCount: 1
 
 initcontainer:
   image:
-    repository: docker.k8s.kuops.com/php-example-app
-    tag: master-54
+    repository: kuops/php-example-app
+    tag: master
     pullPolicy: Always
 
 phpfpm:
   image:
-    repository: kuopsme/php
-    tag: 7.2-fpm-alpine
+    repository: kuops/php
+    tag: 7.4-fpm
     pullPolicy: IfNotPresent
 
 nginx:
   image:
-    repository: kuopsme/nginx
-    tag: 1.15-alpine
+    repository: nginx
+    tag: latest
     pullPolicy: IfNotPresent
-
-imagePullSecrets:
-  name: regcred
 
 nameOverride: ""
 fullnameOverride: ""
@@ -32,23 +29,10 @@ service:
   type: ClusterIP
   port: 80
 
-ingress:
-  enabled: true
-  annotations:
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  paths:
-    - /
-  hosts:
-    - php.k8s.kuops.com
-  tls:
-    - secretName: php-tls-certs
-      hosts:
-        - php.k8s.kuops.com
-
 configmap:
-  name: php-app-conf
-  db_host: mysql-dev
+  php_conf:
+    app_url: php.app.{.INGRESS_NODE_IP}.nip.io
+    db_host: example-mysql
 
 resources: 
   limits:
