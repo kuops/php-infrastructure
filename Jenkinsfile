@@ -25,7 +25,7 @@ spec:
 """
         }
     }
-    
+
     stages {
         
         stage('init helm && kubectl') {
@@ -43,12 +43,25 @@ spec:
             }
         }
 
-        stage('deploy dev') {
+        stage('deploy blue version') {
             
             steps {
-                container('kubectl') {
+                container('helm') {
                     sh """
-                    echo "test"
+                      helm template blue voyager|kubectl apply -f -
+                    """
+                }
+
+            }
+        }
+
+        stage('deploy green version') {
+            
+            steps {
+                container('helm') {
+                    sh """
+                      sed -i 's@master@canary@g' voyager/values.yaml
+                      helm template green voyager|kubectl apply -f -
                     """
                 }
 
