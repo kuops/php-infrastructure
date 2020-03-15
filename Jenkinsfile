@@ -17,9 +17,6 @@ spec:
     command:
     - cat
     tty: true
-    volumeMounts:
-    - mountPath: /root/.kube
-      name: kube-conf    
   - name: kubectl
     image: lachlanevenson/k8s-kubectl:v1.17.3
     command:
