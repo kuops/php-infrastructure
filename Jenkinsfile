@@ -26,6 +26,11 @@ spec:
         }
     }
 
+
+    parameters {
+        string defaultValue: '10.7.0.102', description: 'INGRESS_NODE_IP', name: 'INGRESS_NODE_IP', trim: false
+    }
+
     stages {
         
         stage('init helm && kubectl') {
@@ -48,6 +53,7 @@ spec:
             steps {
                 container('helm') {
                     sh """
+                      sed -i "s@{.INGRESS_NODE_IP}@${INGRESS_NODE_IP}@g" voyager/values.yaml
                       helm template blue voyager|kubectl apply -n default -f -
                       kubectl rollout -n default status deployment blue-voyager
                     """

@@ -31,7 +31,7 @@ service:
 
 configmap:
   php_conf:
-    app_url: http://php.app.{.INGRESS_NODE_IP}.nip.io
+    app_url: php.app.{.INGRESS_NODE_IP}.nip.io
     db_host: example-mysql
 
 resources: 
