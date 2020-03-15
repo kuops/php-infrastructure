@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "voyager.fullname" . }}
+  name: {{ template "voyager.fullname" . }}
   labels:
     app.kubernetes.io/name: {{ include "voyager.name" . }}
     helm.sh/chart: {{ include "voyager.chart" . }}
@@ -19,8 +19,6 @@ spec:
         app.kubernetes.io/name: {{ include "voyager.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
-      imagePullSecrets:
-        - name: {{ .Values.imagePullSecrets.name }}
       initContainers:
         - name: php-init
           image: {{ .Values.initcontainer.image.repository }}:{{ .Values.initcontainer.image.tag }}
@@ -41,9 +39,6 @@ spec:
           ports:
             - containerPort: 80
               name: http
-          env:
-            - name: CONFIGMAP_MD5
-              value: "2c3e25a9114751c0db311944c26d90a0"
           volumeMounts:
             - name: conf
               mountPath: /etc/nginx/conf.d/default.conf
@@ -69,6 +64,6 @@ spec:
       volumes:
         - name: conf
           configMap:
-            name: php-app-conf
+            name: {{ template "voyager.fullname" . }}
         - name: php-app
           emptyDir: {}
