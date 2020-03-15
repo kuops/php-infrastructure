@@ -48,7 +48,7 @@ spec:
             steps {
                 container('helm') {
                     sh """
-                      helm template blue voyager|kubectl apply -f -
+                      helm template blue voyager|kubectl apply -n default -f -
                       kubectl rollout status deployment blue-voyager
                     """
                 }
@@ -62,7 +62,7 @@ spec:
                 container('helm') {
                     sh """
                       sed -i 's@master@canary@g' voyager/values.yaml
-                      helm template green voyager|kubectl apply -f -
+                      helm template green voyager|kubectl apply -n default -f -
                       kubectl rollout status deployment green-voyager
                     """
                 }
